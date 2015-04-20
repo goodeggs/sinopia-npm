@@ -17,12 +17,18 @@
   },
   "homepage": "https://github.com/goodeggs/sinopia-npm",
   "bugs": "https://github.com/goodeggs/sinopia-npm/issues",
-  "dependencies": {},
+  "dependencies": {
+    "npm-registry-client": "^6.3.2",
+    "sinon-chai": "^2.7.0"
+  },
   "devDependencies": {
     "coffee-script": ">=1.8.x",
     "mocha": "~1.x.x",
     "chai": "~1.x.x",
-    "mocha-sinon": "~1.x.x"
+    "mocha-sinon": "~1.x.x",
+    "fibrous": "^0.3.3",
+    "fibers": "^1.0.5",
+    "mocha-fibers": "^1.1.1"
   },
   "scripts": {
     "compile": "coffee --bare --compile --output lib/ src/",

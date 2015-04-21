@@ -4,8 +4,8 @@ class SinopiaNpm
 
   sinopia_version: '1.1.0'
 
-  constructor: ({@client, @timeout, @registry}={}) ->
-    @client ?= new RegClient
+  constructor: ({@client, @timeout, @registry, registryConfig}={}) ->
+    @client ?= new RegClient registryConfig
     @timeout ?= 1000
     @registry ?= 'https://registry.npmjs.org'
 
@@ -25,3 +25,4 @@ class SinopiaNpm
         cb null, [username]
 
 module.exports = SinopiaNpm
+

@@ -1,11 +1,15 @@
 RegClient = require 'npm-registry-client'
+LRU = require 'lru-cache'
+ms = require 'to-ms'
+_ = require 'lodash'
 
 class SinopiaNpm
 
   sinopia_version: '1.1.0'
 
-  constructor: ({@client, @timeout, @registry, registryConfig}={}) ->
+  constructor: ({@client, @cache, @timeout, @registry, registryConfig, cacheConfig}={}) ->
     @client ?= new RegClient registryConfig
+    @cache ?= LRU _.defaults({}, cacheConfig, max: 1000, maxAge: ms.minutes(15))
     @timeout ?= 1000
     @registry ?= 'https://registry.npmjs.org'
 
@@ -16,12 +20,14 @@ class SinopiaNpm
       cb null, data.email
 
   authenticate: (username, password, cb) ->
+    return process.nextTick(-> cb(null, [username])) if @cache.get("password-#{username}") is password
     @_getEmail username, (err, email) =>
       return cb(err) if err?
       return cb() unless email?
-      @client.adduser @registry, {auth: {username, password, email}, @timeout}, (err, data) ->
+      @client.adduser @registry, {auth: {username, password, email}, @timeout}, (err, data) =>
         return cb(null, false) if err?.code is 'E400'
         return cb(err) if err?
+        @cache.set "password-#{username}", password
         cb null, [username]
 
 module.exports = SinopiaNpm

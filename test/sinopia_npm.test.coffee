@@ -3,6 +3,7 @@ require 'mocha-sinon'
 {expect} = chai = require 'chai'
 chai.use require 'sinon-chai'
 RegClient = require 'npm-registry-client'
+ms = require 'to-ms'
 
 sinopiaNpm = require '..'
 
@@ -50,6 +51,27 @@ describe 'sinopia-npm', ->
           .withArgs('https://registry.npmjs.org', auth: {username: 'bobzoller', email: 'bob@example.com', password: 'foobar'}, timeout: 1000)
           .yields(null, {"ok": true})
 
-      it 'returns array of perms', ->
-        expect(auth.sync.authenticate('bobzoller', 'foobar')).to.eql ['bobzoller']
+      describe 'a single call', ->
+
+        it 'returns array of perms', ->
+          expect(auth.sync.authenticate('bobzoller', 'foobar')).to.eql ['bobzoller']
+
+      describe 'multiple calls', ->
+        {clock} = {}
+
+        beforeEach ->
+          clock = @sinon.useFakeTimers()
+
+        it 'caches the authentication for 15 minutes', ->
+          expect(auth.sync.authenticate('bobzoller', 'foobar')).to.eql ['bobzoller']
+          expect(auth.sync.authenticate('bobzoller', 'foobar')).to.eql ['bobzoller']
+          expect(npm.get).to.have.been.calledOnce
+          expect(npm.adduser).to.have.been.calledOnce
+
+          clock.tick ms.minutes(16).valueOf()
+
+          expect(auth.sync.authenticate('bobzoller', 'foobar')).to.eql ['bobzoller']
+          expect(auth.sync.authenticate('bobzoller', 'foobar')).to.eql ['bobzoller']
+          expect(npm.get).to.have.been.calledTwice
+          expect(npm.adduser).to.have.been.calledTwice
 

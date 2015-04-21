@@ -1,6 +1,6 @@
 {
   "name": "sinopia-npm",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "auth plugin for sinopia supporting an npm registry",
   "author": "Good Eggs <open-source@goodeggs.com>",
   "contributors": [

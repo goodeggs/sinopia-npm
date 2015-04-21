@@ -30,5 +30,8 @@ class SinopiaNpm
         @cache.set "password-#{username}", password
         cb null, [username]
 
+  add_user: (username, password, cb) ->
+    @authenticate username, password, cb
+
 module.exports = SinopiaNpm
 

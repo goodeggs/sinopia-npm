@@ -18,11 +18,7 @@ describe 'sinopia-npm', ->
     npm = new RegClient
     auth = sinopiaNpm client: npm
 
-  it 'exports adduser', ->
-    expect(auth).to.have.property 'adduser'
-    expect(auth.adduser).to.be.a 'function'
-
-  describe 'adduser', ->
+  describe '::authenticate', ->
 
     describe 'unknown user', ->
       beforeEach ->
@@ -31,7 +27,7 @@ describe 'sinopia-npm', ->
           .yields(makeError('not found', 'E404'))
 
       it 'returns undefined', ->
-        expect(auth.sync.adduser('bobzoller', 'foobar')).to.be.undefined
+        expect(auth.sync.authenticate('bobzoller', 'foobar')).to.be.undefined
 
     describe 'incorrect password', ->
       beforeEach ->
@@ -43,7 +39,7 @@ describe 'sinopia-npm', ->
           .yields(makeError('bad auth', 'E400'))
 
       it 'returns false', ->
-        expect(auth.sync.adduser('bobzoller', 'foobar')).to.equal false
+        expect(auth.sync.authenticate('bobzoller', 'foobar')).to.equal false
 
     describe 'correct password', ->
       beforeEach ->
@@ -55,5 +51,5 @@ describe 'sinopia-npm', ->
           .yields(null, {"ok": true})
 
       it 'returns array of perms', ->
-        expect(auth.sync.adduser('bobzoller', 'foobar')).to.eql ['bobzoller']
+        expect(auth.sync.authenticate('bobzoller', 'foobar')).to.eql ['bobzoller']
 

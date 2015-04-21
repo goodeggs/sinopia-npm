@@ -2,6 +2,8 @@ RegClient = require 'npm-registry-client'
 
 class SinopiaNpm
 
+  sinopia_version: '1.1.0'
+
   constructor: ({@client, @timeout, @registry}={}) ->
     @client ?= new RegClient
     @timeout ?= 1000
@@ -13,7 +15,7 @@ class SinopiaNpm
       return cb(err) if err?
       cb null, data.email
 
-  adduser: (username, password, cb) ->
+  authenticate: (username, password, cb) ->
     @_getEmail username, (err, email) =>
       return cb(err) if err?
       return cb() unless email?
